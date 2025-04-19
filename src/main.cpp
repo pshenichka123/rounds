@@ -3,7 +3,6 @@
 #include <random>
 #include <algorithm>
 #include <time.h>
-//#include "D:\OOP\rounds\SFML-3.0.0\include\SFML\Graphics.hpp"
 struct Circle {
     sf::Vector2f position;
     float radius;
@@ -44,7 +43,6 @@ int main() {
                 }
             }
         }
-
         if (clock() - last_time_added > 100)
         {
             int x_coord = distx(engine);

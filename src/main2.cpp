@@ -1,11 +1,5 @@
-#include <SFML/Graphics.hpp>
-#include <vector>
+#include "Randomizer777.hpp"
 #include <iostream>
-#include <random>
-#include <time.h>
-#include <algorithm>
-
-
 
 
 //удаление сттарых кругов
@@ -14,11 +8,11 @@
 int main() {
     sf::VideoMode mode = sf::VideoMode::getDesktopMode();
     sf::RenderWindow window(mode, "Fullscreen", sf::Style::Resize);
-    window.setFramerateLimit(1);
+    window.setFramerateLimit(12);
 
 
     sf::Shader waveShader;
-    if (!waveShader.loadFromFile("src/wave.vert", "src/wave.frag")) {
+    if (!waveShader.loadFromFile("wave.vert", "wave.frag")) {
         std::cout << "couldnt load";
         return 0;
     }
@@ -26,10 +20,8 @@ int main() {
     sf::RectangleShape rect(sf::Vector2f(mode.size.x, mode.size.y));
     rect.setPosition(sf::Vector2f(0, 0));
     sf::Clock Clock;
-    std::random_device rd;
-    std::mt19937 engine(rd());
-    std::uniform_int_distribution<int> distx(0, mode.size.x);
-    std::uniform_int_distribution<int> disty(0, mode.size.y);
+
+    Randomizer777 randomizer = (mode);
     clock_t last_time_added = clock();
 
 
@@ -50,12 +42,8 @@ int main() {
 
         if (clock() - last_time_added > 10)
         {
-            int x_coord = distx(engine);
-            int y_coord = disty(engine);
-            points.push_back(sf::Vector2f(
-                x_coord / static_cast<float>(mode.size.x),
-                1.0f - y_coord / static_cast<float>(mode.size.y)
-            ));
+            sf::Vector2f new_rand_vec = randomizer.get_random_vector2f();
+            points.push_back(new_rand_vec);
             last_time_added = clock();
         }
 
@@ -71,6 +59,8 @@ int main() {
         //  std::cout << mode.size.x << "   " << mode.size.y << "\n";
 
         std::cout << points.size() << "\n";
+
+
         waveShader.setUniform("u_points_count", static_cast<int>(points.size()));
         for (int i = 0; i < points.size(); i++) {
             std::string uniform_name = "u_points[" + std::to_string(i) + "]";
@@ -78,8 +68,10 @@ int main() {
                 sf::Vector2f(
                     points[i].x,
                     points[i].y // Инверсия Y
+
                 )
             );
+            std::cout << points[i].x << "  " << points[i].y << "\n";
         }
         waveShader.setUniform("u_time", Clock.getElapsedTime().asSeconds());
 
