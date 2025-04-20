@@ -1,14 +1,27 @@
 #include "Randomizer777.hpp"
+#include "Point.hpp"
 #include <iostream>
-
+#include <time.h>
 
 //удаление сттарых кругов
 // привязка ко времени нормальная
 
+
+
+
+void add_point(std::vector<Point>& points, Randomizer777& randomizer)
+{
+    sf::Vector2f new_rand_vec = randomizer.get_random_vector2f();
+    points.push_back(Point(new_rand_vec, clock()));
+}
+
+
+
+
 int main() {
     sf::VideoMode mode = sf::VideoMode::getDesktopMode();
     sf::RenderWindow window(mode, "Fullscreen", sf::Style::Resize);
-    window.setFramerateLimit(12);
+    window.setFramerateLimit(60);
 
 
     sf::Shader waveShader;
@@ -31,9 +44,9 @@ int main() {
 
 
 
-    std::vector<sf::Vector2f> points;
+    std::vector<Point> points;
+    add_point(points, randomizer);
     while (window.isOpen()) {
-
         while (const std::optional event = window.pollEvent()) {
             if (event->is<sf::Event::Closed>())
                 window.close();
@@ -42,8 +55,8 @@ int main() {
 
         if (clock() - last_time_added > 10)
         {
-            sf::Vector2f new_rand_vec = randomizer.get_random_vector2f();
-            points.push_back(new_rand_vec);
+
+            // add_point(points, randomizer);
             last_time_added = clock();
         }
 
@@ -66,26 +79,25 @@ int main() {
             std::string uniform_name = "u_points[" + std::to_string(i) + "]";
             waveShader.setUniform(uniform_name,
                 sf::Vector2f(
-                    points[i].x,
-                    points[i].y // Инверсия Y
+                    points[i].getx(),
+                    points[i].gety() // Инверсия Y
 
                 )
             );
-            std::cout << points[i].x << "  " << points[i].y << "\n";
+            std::cout << points[i].getx() << "  " << points[i].gety() << "   " << points[i].getCreationTime() << "   " << clock() << "\n";
         }
         waveShader.setUniform("u_time", Clock.getElapsedTime().asSeconds());
-
-
-
+        std::cout << clock() << "\n";
 
 
         window.clear();
         window.draw(rect, &waveShader);
         window.display();
-        while (points.size() > 1)
-        {
-            points.erase(points.begin());
-        }
+        points.erase(
+            std::remove_if(points.begin(), points.end(),
+                [](const Point& c) { return clock() - c.getCreationTime() > 5000;}),
+            points.end()
+        );
 
 
 
