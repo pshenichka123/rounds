@@ -53,14 +53,14 @@ int main() {
         }
 
 
-        if (clock() - last_time_added > 10)
+        if (clock() - last_time_added > 100)
         {
 
-            // add_point(points, randomizer);
+            add_point(points, randomizer);
             last_time_added = clock();
         }
 
-        if (points.size() > 300)
+        if (points.size() > 30)
         {
             std::cout << "to much points";
             return 0;
@@ -95,7 +95,7 @@ int main() {
         window.display();
         points.erase(
             std::remove_if(points.begin(), points.end(),
-                [](const Point& c) { return clock() - c.getCreationTime() > 5000;}),
+                [](const Point& c) { return clock() - c.getCreationTime() > 1000 * M_PI;}),
             points.end()
         );
 

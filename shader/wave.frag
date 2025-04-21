@@ -16,7 +16,7 @@ void main() {
     // Суммируем волны от всех точек
     for (int i = 0; i < u_points_count; i++) {
         float dist = distance(uv, u_points[i]);
-        total_wave += sin(dist * 20.0 - u_time * 1.0) * exp(-dist * 5.0);
+        total_wave += sin(dist * 2.0 - u_time * 1.0) * exp(-dist * 5.0);
     }
     
     // Нормализуем и преобразуем в цвет
